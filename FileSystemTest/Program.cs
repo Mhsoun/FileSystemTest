@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-
+using System.Security.Cryptography.X509Certificates;
 
 namespace FileSystemTest
 {
@@ -10,6 +10,7 @@ namespace FileSystemTest
         {
             var app = new Program();
             app.CreateDirectory();
+            app.CopySavedData();
             app.DetletTemp();
 
 
@@ -26,6 +27,13 @@ namespace FileSystemTest
 
         };
 
+        public enum FolderNames
+        {
+            workspace,
+            Archive,
+            temp,
+            SaveData
+        }
         
 
         public void CreateDirectory ()
@@ -33,7 +41,7 @@ namespace FileSystemTest
             var total = folders.Length;
             for (var i = 0; i < total; i++)
             {
-                var dirName = folders[i];
+                var dirName = GetFolderByName((FolderNames)i);
                 if (Directory.Exists(dirName))
                 {
                     Console.WriteLine("directory " + folders[i] + " exsit");
@@ -48,11 +56,26 @@ namespace FileSystemTest
 
         public void DetletTemp()
         {
-            var tmpDir = folders[2];
+            var tmpDir = GetFolderByName(FolderNames.temp);
             if (Directory.Exists(tmpDir))
             {
                 Directory.Delete(tmpDir,true);
             }
+        }
+
+        public void CopySavedData()
+        {
+            var savedDataDir = GetFolderByName(FolderNames.SaveData);
+            if (Directory.Exists(savedDataDir))
+            {
+                var destDirName = GetFolderByName(FolderNames.SaveData)+"SavaData_" + DateTime.Now.ToString("yyyyMMddHHmmss");
+                Directory.Move(savedDataDir, destDirName);
+            }
+
+        }
+        public string GetFolderByName(FolderNames name)
+        {
+            return folders[(int)name];
         }
     }
 }
