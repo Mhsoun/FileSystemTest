@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 
 namespace FileSystemTest
@@ -10,6 +11,7 @@ namespace FileSystemTest
         {
             var app = new Program();
             app.CreateDirectory();
+            app.CreateFile();
             app.CopySavedData();
             app.DetletTemp();
 
@@ -68,7 +70,7 @@ namespace FileSystemTest
             var savedDataDir = GetFolderByName(FolderNames.SaveData);
             if (Directory.Exists(savedDataDir))
             {
-                var destDirName = GetFolderByName(FolderNames.SaveData)+"SavaData_" + DateTime.Now.ToString("yyyyMMddHHmmss");
+                var destDirName = GetFolderByName(FolderNames.Archive)+"SavaData_" + DateTime.Now.ToString("yyyyMMddHHmmss");
                 Directory.Move(savedDataDir, destDirName);
             }
 
@@ -76,6 +78,19 @@ namespace FileSystemTest
         public string GetFolderByName(FolderNames name)
         {
             return folders[(int)name];
+        }
+
+        public void CreateFile ()
+        {
+            var path = GetFolderByName(FolderNames.SaveData)+@"/TestFile.txt";
+            File.WriteAllText(path, "hello world!");
+
+            var fileInfo = new FileInfo(path);
+            var name = Path.GetFileNameWithoutExtension(fileInfo.FullName);
+            var ext = fileInfo.Extension;
+            var size = fileInfo.Length;
+
+            Console.WriteLine("Created file " + name + "with extension "+ ext+" with a size of " +size);
         }
     }
 }
